@@ -34,7 +34,7 @@ export default function FooterPanel({ data, active, onGo }) {
           </div>
         </div>
         <div className="foot__base">
-          <span>Rann Mahal</span>
+          <span>Giraffes</span>
           <span>Est. 1884 · Restored 2019</span>
         </div>
       </div>

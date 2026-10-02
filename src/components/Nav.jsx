@@ -18,7 +18,7 @@ export default function Nav({ onGo, chapters, stuck }) {
 
         <button className="nav__mark" onClick={() => jump(0)}>
           <span className="nav__rule" />
-          <span className="nav__name">Rann&nbsp;Mahal</span>
+          <span className="nav__name">Giraffes</span>
           <span className="nav__rule" />
         </button>
 

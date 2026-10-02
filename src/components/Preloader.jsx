@@ -18,7 +18,7 @@ export default function Preloader({ pct, done }) {
             d="M60 4 C86 4 110 26 110 56 L110 156 L10 156 L10 56 C10 26 34 4 60 4 Z"
           />
         </svg>
-        <div className="preloader__mark">Rann Mahal</div>
+        <div className="preloader__mark">Giraffes</div>
         <div className="preloader__pct">
           {pct}
           <i>%</i>
