@@ -14,6 +14,7 @@ export function useScrollFilm({
   sections = 5,
   stride = 6,
   ease = 0.16,
+  cameraPush = false,
   framePath = (i) => `frames/f_${String(i + 1).padStart(4, '0')}.webp`,
 }) {
   const canvasRef = useRef(null);
@@ -52,7 +53,7 @@ export function useScrollFilm({
       const canvas = canvasRef.current;
       if (!canvas) return;
       const idx = nearestLoaded(Math.round(f));
-      if (idx < 0 || idx === shown.current) return;
+      if (idx < 0 || (cameraPush ? f : idx) === shown.current) return;
       const img = images.current[idx];
       if (!img) return;
 
@@ -76,10 +77,18 @@ export function useScrollFilm({
         dx = (cw - dw) / 2;
       }
 
+      // Gently move into the resort as visitors scroll; respect reduced motion.
+      if (cameraPush && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const zoom = 1 + clamp(f / (frameCount - 1), 0, 1) * 0.18;
+        dw *= zoom;
+        dh *= zoom;
+        dx = (cw - dw) / 2;
+        dy = (ch - dh) / 2;
+      }
       ctx.drawImage(img, dx, dy, dw, dh);
-      shown.current = idx;
+      shown.current = cameraPush ? f : idx;
     },
-    [nearestLoaded]
+    [nearestLoaded, cameraPush, frameCount]
   );
 
   const sizeCanvas = useCallback(() => {
@@ -148,8 +157,11 @@ export function useScrollFilm({
 
     const run = async () => {
       const priority = [];
-      for (let i = 0; i < frameCount; i += stride) priority.push(i);
-      if (priority[priority.length - 1] !== frameCount - 1) priority.push(frameCount - 1);
+      if (cameraPush) priority.push(0);
+      else {
+        for (let i = 0; i < frameCount; i += stride) priority.push(i);
+        if (priority[priority.length - 1] !== frameCount - 1) priority.push(frameCount - 1);
+      }
 
       let done = 0;
       await Promise.all(
@@ -169,7 +181,7 @@ export function useScrollFilm({
       // background pass — fill the gaps, nearest to the playhead first
       const have = new Set(priority);
       const rest = [];
-      for (let i = 0; i < frameCount; i++) if (!have.has(i)) rest.push(i);
+      if (!cameraPush) for (let i = 0; i < frameCount; i++) if (!have.has(i)) rest.push(i);
       rest.sort((a, b) => Math.abs(a - current.current) - Math.abs(b - current.current));
 
       let cursor = 0;
@@ -183,7 +195,7 @@ export function useScrollFilm({
     };
 
     run();
-  }, [frameCount, stride, framePath, paint, onScroll]);
+  }, [frameCount, stride, framePath, paint, onScroll, cameraPush]);
 
   /* ── wire up ── */
   useEffect(() => {

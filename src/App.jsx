@@ -16,7 +16,8 @@ export default function App() {
     sections: SECTIONS,
     stride: 6,
     ease: 0.16,
-    framePath: (i) => `${import.meta.env.BASE_URL}frames/f_${String(i + 1).padStart(4, '0')}.webp`,
+    framePath: () => `${import.meta.env.BASE_URL}colorado-resort.png`,
+    cameraPush: true,
   });
 
   /* The scrim follows the copy, so the palace stays unobstructed on the
