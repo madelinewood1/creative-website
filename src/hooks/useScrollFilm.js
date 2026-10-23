@@ -51,35 +51,28 @@ export function useScrollFilm({
     (f) => {
       const canvas = canvasRef.current;
       if (!canvas) return;
-      const idx = nearestLoaded(Math.round(f));
-      if (idx < 0 || idx === shown.current) return;
-      const img = images.current[idx];
-      if (!img) return;
-
+      if (f === shown.current) return;
+      const first = nearestLoaded(Math.floor(f));
+      if (first < 0) return;
+      const second = nearestLoaded(Math.ceil(f));
       const ctx = canvas.getContext('2d', { alpha: false });
-      const cw = canvas.width;
-      const ch = canvas.height;
-      const ir = img.naturalWidth / img.naturalHeight;
-      const cr = cw / ch;
-
-      // cover-fit
-      let dw, dh, dx, dy;
-      if (cr > ir) {
-        dw = cw;
-        dh = cw / ir;
-        dx = 0;
-        dy = (ch - dh) / 2;
-      } else {
-        dh = ch;
-        dw = ch * ir;
-        dy = 0;
-        dx = (cw - dw) / 2;
-      }
-
-      ctx.drawImage(img, dx, dy, dw, dh);
-      shown.current = idx;
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const draw = (index, alpha) => {
+        const img = images.current[index];
+        if (!img) return;
+        const zoom = reduced ? 1 : 1.02 + (f / Math.max(1, frameCount - 1)) * 0.08;
+        const scale = Math.max(canvas.width / img.naturalWidth, canvas.height / img.naturalHeight) * zoom;
+        const w = img.naturalWidth * scale;
+        const h = img.naturalHeight * scale;
+        ctx.globalAlpha = alpha;
+        ctx.drawImage(img, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h);
+      };
+      draw(first, 1);
+      if (second !== first && second >= 0) draw(second, f - Math.floor(f));
+      ctx.globalAlpha = 1;
+      shown.current = f;
     },
-    [nearestLoaded]
+    [nearestLoaded, frameCount]
   );
 
   const sizeCanvas = useCallback(() => {
@@ -122,7 +115,7 @@ export function useScrollFilm({
     (i) => {
       const max = document.body.scrollHeight - window.innerHeight;
       const p = clamp((i + 0.38) / sections, 0, 1);
-      window.scrollTo({ top: max * p, behavior: 'smooth' });
+      window.scrollTo({ top: max * p, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
     },
     [sections]
   );

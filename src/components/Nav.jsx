@@ -12,20 +12,20 @@ export default function Nav({ onGo, chapters, stuck }) {
     <>
       <header className={`nav${stuck ? ' nav--stuck' : ''}`}>
         <nav className="nav__links nav__links--l">
-          <button onClick={() => jump(0)}>The Palace</button>
-          <button onClick={() => jump(1)}>The Gate</button>
+          <button onClick={() => jump(0)}>The Studio</button>
+          <button onClick={() => jump(1)}>Classes</button>
         </nav>
 
         <button className="nav__mark" onClick={() => jump(0)}>
           <span className="nav__rule" />
-          <span className="nav__name">Giraffes</span>
+          <span className="nav__name">R<span>1</span>DE</span>
           <span className="nav__rule" />
         </button>
 
         <nav className="nav__links nav__links--r">
-          <button onClick={() => jump(2)}>The Court</button>
+          <button onClick={() => jump(2)}>Sculpt</button>
           <button className="nav__cta" onClick={() => jump(4)}>
-            Reserve
+            Connect
           </button>
         </nav>
 

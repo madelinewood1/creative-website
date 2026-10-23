@@ -7,16 +7,18 @@ import Rail from './components/Rail.jsx';
 import Chapter from './components/Chapter.jsx';
 import FooterPanel from './components/FooterPanel.jsx';
 
-const FRAMES = 240;
+const SCENES = ['studio.jpg', 'studio.jpg', 'inside.jpg', 'merch.jpg', 'inside.jpg'];
+const scenePath = (i) => `${import.meta.env.BASE_URL}r1de/${SCENES[i]}`;
+const FRAMES = SCENES.length;
 const SECTIONS = 5;
 
 export default function App() {
   const { canvasRef, loadPct, isReady, section, progress, goTo } = useScrollFilm({
     frameCount: FRAMES,
     sections: SECTIONS,
-    stride: 6,
+    stride: 1,
     ease: 0.16,
-    framePath: (i) => `${import.meta.env.BASE_URL}frames/f_${String(i + 1).padStart(4, '0')}.webp`,
+    framePath: scenePath,
   });
 
   /* The scrim follows the copy, so the palace stays unobstructed on the
@@ -25,6 +27,7 @@ export default function App() {
 
   return (
     <>
+      <div className="education-banner" role="note">This website was created for educational purposes only and does not represent or reflect the official website of the business.</div>
       <Preloader pct={loadPct} done={isReady} />
       <FilmCanvas ref={canvasRef} side={side} />
       <Nav onGo={goTo} chapters={CHAPTERS} stuck={progress > 0.008} />

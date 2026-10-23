@@ -14,6 +14,7 @@ export default function Chapter({ data, active }) {
         </h2>
         <Divider />
         <p className="ch__body">{body}</p>
+        {data.link && <a className="chapter-link" href={data.link} target="_blank" rel="noreferrer">{data.label}<span className="sr-only"> (official website, opens in a new tab)</span></a>}
       </div>
       {scroll && <p className="ch__scroll">{scroll}</p>}
     </section>

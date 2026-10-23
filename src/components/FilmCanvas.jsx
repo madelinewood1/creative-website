@@ -5,7 +5,7 @@ import { forwardRef } from 'react';
 const FilmCanvas = forwardRef(function FilmCanvas({ side }, ref) {
   return (
     <div className="stage">
-      <canvas ref={ref} className="stage__canvas" />
+      <canvas ref={ref} className="stage__canvas" role="img" aria-label="R1DE Fairfield cycling studio, welcoming reception, and merchandise space" />
       <div className={`stage__scrim stage__scrim--${side}`} />
       <div className="stage__grade" />
       <div className="stage__vignette" />
